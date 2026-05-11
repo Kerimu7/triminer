@@ -31,10 +31,21 @@ jobs:
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin
-          buildozer android debug
+          buildozer android debug 2>&1 | tee build.log
+          grep -i "error\|exception\|failed\|traceback" build.log | tail -50 || true
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build.log
+            .buildozer/android/platform/build-*/dists/triminer/build/outputs/**/*.log
+          retention-days: 5
 
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: success()
         with:
           name: TriMiner-APK
           path: bin/*.apk
