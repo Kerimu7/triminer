@@ -19,7 +19,7 @@ android.ndk = 25b
 p4a.branch = master
 android.ndk_api = 26
 android.accept_sdk_license = True
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = android.archs = arm64-v8a
 android.wakelock = True
 
 [buildozer]
