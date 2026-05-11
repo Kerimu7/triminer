@@ -16,11 +16,11 @@ android.permissions = INTERNET,WAKE_LOCK,FOREGROUND_SERVICE
 android.api = 33
 android.minapi = 26
 android.ndk = 25b
-p4a.branch = master
 android.ndk_api = 26
 android.accept_sdk_license = True
-android.archs = android.archs = arm64-v8a
+android.archs = arm64-v8a
 android.wakelock = True
+p4a.branch = master
 
 [buildozer]
 log_level = 2
