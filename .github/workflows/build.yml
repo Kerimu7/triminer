@@ -12,33 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Build with ArtemSBulgakov Buildozer Action
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
-          distribution: temurin
-          java-version: 17
+          workdir: .
+          buildozer_version: stable
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake build-essential ccache
-          pip install --upgrade pip
-          pip install buildozer==1.5.0 cython==0.29.33
-
-      - name: Build APK
-        run: |
-          export PATH=$PATH:~/.local/bin
-          buildozer android debug
-          echo "=== FINDING APK ==="
-          find ~ -name "*.apk" 2>/dev/null
-          mkdir -p output
-          find ~ -name "*.apk" -exec cp {} output/ \; 2>/dev/null || true
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: TriMiner-APK
-          path: output/
+          path: ${{ steps.buildozer.outputs.filename }}
           retention-days: 30
