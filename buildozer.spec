@@ -7,7 +7,7 @@ source.include_exts = py,png,jpg,kv,atlas,json
 source.include_patterns = miners/*.py,backend/*.py
 version = 1.0.0
 
-requirements = python3,kivy==2.3.0,Cython==0.29.33,requests,argon2-cffi
+requirements = python3,kivy,Cython==0.29.33,requests,argon2-cffi
 
 orientation = portrait
 fullscreen = 0
