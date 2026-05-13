@@ -12,16 +12,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build with ArtemSBulgakov Buildozer Action
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - uses: actions/setup-java@v4
         with:
-          workdir: .
-          buildozer_version: stable
+          distribution: temurin
+          java-version: 17
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake build-essential ccache
+          pip install --upgrade pip
+          pip install buildozer==1.5.0 cython==0.29.33
+
+      - name: Build APK
+        run: |
+          export PATH=$PATH:~/.local/bin
+          export ANDROIDSDK=$HOME/.buildozer/android/platform/android-sdk
+          export ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25b
+          buildozer android debug 2>&1 | tail -100
+
+      - name: Find and upload APK
+        if: always()
+        run: |
+          mkdir -p output
+          find . -name "*.apk" 2>/dev/null -exec cp {} output/ \;
+          find ~/.buildozer -name "*.apk" 2>/dev/null -exec cp {} output/ \; || true
+          ls -la output/ || echo "No APK found"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: TriMiner-APK
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: output/
           retention-days: 30
